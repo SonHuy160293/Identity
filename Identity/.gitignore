@@ -1,0 +1,43 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# User-Specific Files
+.vs/
+*.user
+*.suo
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Publish Profiles
+PublishProfiles/
+
+# AppSettings (Sensitive Files)
+appsettings.json
+appsettings.*.json
+
+# IDE and Tooling Files
+.idea/
+*.log
+
+# Package Files
+*.nupkg
+*.snupkg
+
+# Logs
+*.log
+
+# Rider IDE
+.idea/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+#upload
+.pdf
