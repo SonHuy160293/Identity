@@ -33,14 +33,44 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Edit Role"));
+    options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
+});
+
+
+var GoogleClientId = builder.Configuration["Google:AppId"];
+var GoogleClientSecret = builder.Configuration["Google:AppSecret"];
+builder.Services.AddAuthentication()
+.AddGoogle(options =>
+{
+    options.ClientId = GoogleClientId;
+    options.ClientSecret = GoogleClientSecret;
+    // Ensure this matches the Google Cloud Console
+    // You can set other options as needed.
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax; // Ensure cookies are sent properly
+});
+
 builder.Services.AddControllersWithViews();
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
 }
 app.UseStaticFiles();
 
@@ -49,6 +79,9 @@ app.UseRouting();
 //Configuring Authentication Middleware to the Request Pipeline
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCookiePolicy();
+
 
 app.MapControllerRoute(
     name: "default",
