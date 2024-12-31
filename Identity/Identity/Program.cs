@@ -1,4 +1,7 @@
+using Identity.Interfaces;
 using Identity.Models;
+using Identity.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +25,10 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 options.Password.RequireLowercase = true;
                 options.Password.RequiredUniqueChars = 4;
                 // Other settings can be configured here
+
+                options.SignIn.RequireConfirmedEmail = true;
             })
-                    .AddEntityFrameworkStores<ApplicationDbContext>();
+                    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Configure the Application Cookie settings
 builder.Services.ConfigureApplicationCookie(options =>
@@ -55,6 +60,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.Lax; // Ensure cookies are sent properly
 });
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();
 
